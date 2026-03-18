@@ -1,4 +1,4 @@
-package com.ngulik.kotakpos_admin.controller.web;
+package com.ngulik.kotakpos_admin.controller.web.controller;
 
 import com.ngulik.kotakpos_admin.dto.LoginDto;
 import com.ngulik.kotakpos_admin.dto.UserDto;
