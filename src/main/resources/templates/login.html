@@ -22,15 +22,15 @@
             <span th:text="${error}">Invalid email or password.</span>
         </div>
 
-<!--        param.param:objek bawaan Thymeleaf-->
+        <!--        param.param:objek bawaan Thymeleaf-->
         <div th:if="${param.param}" class="alert alert-danger" role="alert">
             Invalid email or password.
         </div>
-<!--        param.logout: Objek bawaan Thymeleaf-->
+        <!--        param.logout: Objek bawaan Thymeleaf-->
         <div th:if="${param.logout}" class="alert alert-success" role="alert">
             You have been logged out successfully.
         </div>
-<!--        param.registered: Objek bawaan Thymeleaf-->
+        <!--        param.registered: Objek bawaan Thymeleaf-->
         <div th:if="${param.registered}" class="alert alert-success" role="alert">
             Registration successful. Please wait for admin approval.
         </div>

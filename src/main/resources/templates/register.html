@@ -18,18 +18,23 @@
     </div>
     <div class="card-body">
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-        <form>
+        <form th:action="@{/register}" th:object="${userDto}" method="post">
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name">
+                <input type="text" class="form-control" id="name" th:field="*{name}"
+                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email">
+                <input type="email" class="form-control" id="email" th:field="*{email}"
+                th:classappend="${#fields.hasErrors('email')} ? 'is-Invalid' : ''" required>
             </div>
             <div class="mb-4">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password">
+                <input type="password" class="form-control" id="password" th:field="*{password}"
+                th:classappend="${#fields.hasErrors('password')} ? 'is-Invalid' : ''" required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                th:errors="*{password}"></div>
             </div>
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Register</button>
