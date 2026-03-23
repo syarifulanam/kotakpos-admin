@@ -57,8 +57,10 @@ public class SecurityConfig {
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
+                )
+                .exceptionHandling((exceptions) -> exceptions
+                        .accessDeniedPage("/access-denied")
                 );
-
         return http.build();
     }
 
