@@ -33,4 +33,27 @@ public class UserService {
     public Page<UserDto> getAllUsers(String name, String email, UserRole role, UserStatus status, Pageable pageable) {
         return userRepository.search(name, email, role, status, pageable).map(userMapper::toDto);
     }
+
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userMapper.toDto(user);
+    }
+
+    @Transactional
+    public void saveUser(UserDto userDto) {
+        User user;
+        if (userDto.getId() == null) {
+            // Create new user
+            user = userMapper.toEntity(userDto);
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        } else {
+            //update existing user
+            user = userRepository.findById(userDto.getId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            //Keep existing password
+            userMapper.updateEntityFromDto(userDto, user);
+            user.setPassword(user.getPassword());
+        }
+        userRepository.save(user);
+    }
 }

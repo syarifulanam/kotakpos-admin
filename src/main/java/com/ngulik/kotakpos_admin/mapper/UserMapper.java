@@ -35,4 +35,16 @@ public class UserMapper {
         // Password is usually not sent back in DTO for security reasons, or handled specifically
         return dto;
     }
+
+    public void updateEntityFromDto(UserDto dto, User user) {
+        if (dto == null || user == null) {
+            return;
+        }
+
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setRole(dto.getRole());
+        user.setStatus(dto.getStatus());
+        // Password update logic is usually handled separately in service
+    }
 }
