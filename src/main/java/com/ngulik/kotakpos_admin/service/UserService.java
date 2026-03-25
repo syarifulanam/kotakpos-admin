@@ -8,6 +8,8 @@ import com.ngulik.kotakpos_admin.mapper.UserMapper;
 import com.ngulik.kotakpos_admin.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,9 @@ public class UserService {
         user.setRole(UserRole.CASHIER); // default role for registration
         user.setStatus(UserStatus.INACTIVE); // default status
         return userRepository.save(user);
+    }
+
+    public Page<UserDto> getAllUsers(String name, String email, UserRole role, UserStatus status, Pageable pageable) {
+        return userRepository.search(name, email, role, status, pageable).map(userMapper::toDto);
     }
 }

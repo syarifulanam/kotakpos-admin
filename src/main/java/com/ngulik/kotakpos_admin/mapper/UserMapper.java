@@ -21,4 +21,18 @@ public class UserMapper {
         user.setStatus(dto.getStatus());
         return user;
     }
+
+    public UserDto toDto(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        dto.setStatus(user.getStatus());
+        // Password is usually not sent back in DTO for security reasons, or handled specifically
+        return dto;
+    }
 }
