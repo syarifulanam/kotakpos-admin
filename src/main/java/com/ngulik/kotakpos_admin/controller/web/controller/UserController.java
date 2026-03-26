@@ -57,6 +57,7 @@ public class UserController {
         return "users/form";
     }
 
+    // NOTE: untuk save dan edit udah 1 paket method
     @PostMapping("/save")
     public String saveUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult result, Model model,
                            RedirectAttributes redirectAttributes) {
@@ -79,5 +80,27 @@ public class UserController {
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("statuses", UserStatus.values());
         return "users/form";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        userService.deleteUser(id);
+        redirectAttributes.addFlashAttribute("successMessage", "User deleted successfully");
+        return "redirect:/users";
+    }
+
+    @GetMapping("/reset-password/{id}")
+    public String resetPasswordForm(@PathVariable Long id, Model model) {
+        UserDto user = userService.getUserById(id);
+        user.setPassword(null);
+        model.addAttribute("user", user);
+        return "users/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@ModelAttribute("user") UserDto userDto, RedirectAttributes redirectAttributes) {
+        userService.resetPassword(userDto.getId(), userDto.getPassword());
+        redirectAttributes.addFlashAttribute("successMessage", "Password reset successfully!");
+        return "redirect:/users";
     }
 }

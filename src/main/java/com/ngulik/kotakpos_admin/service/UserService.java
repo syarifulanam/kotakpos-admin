@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +56,20 @@ public class UserService {
             user.setPassword(user.getPassword());
         }
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void resetPassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (StringUtils.hasText(newPassword)) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        }
     }
 }
