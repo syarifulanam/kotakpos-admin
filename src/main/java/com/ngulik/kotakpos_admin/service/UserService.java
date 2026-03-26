@@ -4,6 +4,7 @@ import com.ngulik.kotakpos_admin.dto.UserDto;
 import com.ngulik.kotakpos_admin.entity.User;
 import com.ngulik.kotakpos_admin.enums.UserRole;
 import com.ngulik.kotakpos_admin.enums.UserStatus;
+import com.ngulik.kotakpos_admin.exception.error.ResourceNotFoundException;
 import com.ngulik.kotakpos_admin.mapper.UserMapper;
 import com.ngulik.kotakpos_admin.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -36,7 +37,7 @@ public class UserService {
     }
 
     public UserDto getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toDto(user);
     }
 
@@ -50,7 +51,7 @@ public class UserService {
         } else {
             //update existing user
             user = userRepository.findById(userDto.getId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
             //Keep existing password
             userMapper.updateEntityFromDto(userDto, user);
             user.setPassword(user.getPassword());
@@ -66,7 +67,7 @@ public class UserService {
     @Transactional
     public void resetPassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (StringUtils.hasText(newPassword)) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
