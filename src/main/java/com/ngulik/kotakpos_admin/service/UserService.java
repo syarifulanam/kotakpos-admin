@@ -1,9 +1,12 @@
 package com.ngulik.kotakpos_admin.service;
 
+import com.ngulik.kotakpos_admin.dto.ChangePasswordDto;
 import com.ngulik.kotakpos_admin.dto.UserDto;
+import com.ngulik.kotakpos_admin.dto.UserProfileDto;
 import com.ngulik.kotakpos_admin.entity.User;
 import com.ngulik.kotakpos_admin.enums.UserRole;
 import com.ngulik.kotakpos_admin.enums.UserStatus;
+import com.ngulik.kotakpos_admin.exception.error.BadRequestException;
 import com.ngulik.kotakpos_admin.exception.error.ResourceNotFoundException;
 import com.ngulik.kotakpos_admin.mapper.UserMapper;
 import com.ngulik.kotakpos_admin.repository.UserRepository;
@@ -11,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -72,5 +76,48 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
         }
+    }
+
+    public UserProfileDto getUserProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserProfileDto dto = new UserProfileDto();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        dto.setStatus(user.getStatus());
+        dto.setJoinedSince(user.getCreatedAt());
+        return dto;
+    }
+
+    @Transactional
+    public UserProfileDto updateUserProfile(String currentEmail, UserProfileDto profileDto) {
+        User user = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setName(profileDto.getName());
+        user.setEmail(profileDto.getEmail());
+        userRepository.save(user);
+
+        return getUserProfile(currentEmail);
+    }
+
+    @Transactional
+    public UserProfileDto changePassword(String email, ChangePasswordDto changePasswordDto) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
+            throw new BadRequestException("Incorrect current password");
+        }
+
+        if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())) {
+            throw new BadRequestException("New password and confirm password do not match");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(user);
+
+        return getUserProfile(email);
     }
 }
