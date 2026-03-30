@@ -1,8 +1,8 @@
 package com.ngulik.kotakpos_admin.controller.web.controller;
 
-import com.ngulik.kotakpos_admin.entity.Customer;
+import com.ngulik.kotakpos_admin.entity.Supplier;
 import com.ngulik.kotakpos_admin.exception.error.ResourceNotFoundException;
-import com.ngulik.kotakpos_admin.repository.CustomerRepository;
+import com.ngulik.kotakpos_admin.repository.SupplierRepository;
 import com.ngulik.kotakpos_admin.util.PageHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,11 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/customers")
+@RequestMapping("/suppliers")
 @RequiredArgsConstructor
-public class CustomerController {
+public class SupplierController {
 
-    private final CustomerRepository customerRepository;
+    private final SupplierRepository supplierRepository;
 
     @GetMapping
     public String index(Model model,
@@ -30,52 +30,51 @@ public class CustomerController {
                         @RequestParam(defaultValue = "id") String sortBy,
                         @RequestParam(defaultValue = "desc") String sortDir) {
         Pageable pageable = PageHelper.defaultPageable(sortDir, sortBy, page, size);
-        Page<Customer> customers = customerRepository.search(name, phone, email, pageable);
+        Page<Supplier> suppliers = supplierRepository.search(name, phone, email, pageable);
 
-        model.addAttribute("customers", customers);
+        model.addAttribute("suppliers", suppliers);
         model.addAttribute("name", name);
         model.addAttribute("phone", phone);
-        model.addAttribute("email", email);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
-        return "customers/index";
+
+        return "suppliers/index";
     }
 
     @GetMapping("/new")
-    public String newCustomer(Model model) {
-        model.addAttribute("customer", new Customer());
-        return "customers/form";
+    public String newSupplier(Model model) {
+        model.addAttribute("supplier", new Supplier());
+        return "suppliers/form";
     }
 
     @PostMapping
-    public String createCustomer(@ModelAttribute Customer customer, RedirectAttributes redirectAttributes) {
-        customerRepository.save(customer);
-        redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully");
-        return "redirect:/customers";
+    public String createSupplier(@ModelAttribute Supplier supplier, RedirectAttributes redirectAttributes) {
+        supplierRepository.save(supplier);
+        redirectAttributes.addFlashAttribute("successMessage", "Supplier created successfull!");
+        return "redirect:/suppliers";
     }
 
     @GetMapping("/edit/{id}")
-    public String editCustomer(@PathVariable Long id, Model model) {
-        Customer customer = customerRepository.findById(id)
+    public String editSupplier(@PathVariable Long id, Model model) {
+        Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with Id:" + id));
-        model.addAttribute("customer", customer);
-        return "customers/form";
+        model.addAttribute("supplier", supplier);
+        return "suppliers/form";
     }
 
     @PostMapping("/update/{id}")
-    public String updateCustomer(@PathVariable Long id, @ModelAttribute Customer customer,
+    public String updateSupplier(@PathVariable Long id, @ModelAttribute Supplier supplier,
                                  RedirectAttributes redirectAttributes) {
-        customer.setId(id);
-        customerRepository.save(customer);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully");
-        return "redirect:/customers";
+        supplier.setId(id);
+        supplierRepository.save(supplier);
+        redirectAttributes.addFlashAttribute("successMessage", "Supplier updated successfully!");
+        return "redirect:/suppliers";
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        customerRepository.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Customer deleted successfully");
-        return "redirect:/customers";
+    @PostMapping("delete/{id}")
+    public String deleteSupplier(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        supplierRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Supplier deleted successfully!");
+        return "redirect:/suppliers";
     }
 }

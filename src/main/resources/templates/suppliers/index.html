@@ -1,0 +1,207 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Suppliers Management</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Suppliers Management</h2>
+                <p class="text-muted mb-0">Manage your product suppliers.</p>
+            </div>
+            <a th:href="@{/suppliers/new}" class="btn btn-primary shadow-sm d-flex align-items-center">
+                <i class="bi bi-truck me-2"></i>
+                <span>Add New Supplier</span>
+            </a>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+
+                <!-- Search Form -->
+                <form th:action="@{/suppliers}" method="get" class="mb-4">
+                    <div class="row g-3">
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-search text-muted"></i>
+                                </span>
+                                <input type="text" name="name"
+                                       class="form-control border-start-0 bg-light"
+                                       placeholder="Search by name..."
+                                       th:value="${name}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-telephone text-muted"></i>
+                                </span>
+                                <input type="text" name="phone"
+                                       class="form-control border-start-0 bg-light"
+                                       placeholder="Search by phone..."
+                                       th:value="${phone}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-envelope text-muted"></i>
+                                </span>
+                                <input type="text" name="email"
+                                       class="form-control border-start-0 bg-light"
+                                       placeholder="Search by email..."
+                                       th:value="${email}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button class="btn btn-dark w-100" type="submit">
+                                Filter
+                            </button>
+                        </div>
+
+                        <div class="col-md-1">
+                            <a th:href="@{/suppliers}" class="btn btn-outline-secondary w-100">
+                                Reset
+                            </a>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase text-muted small">
+                        <tr>
+                            <th class="border-0 py-3 ps-4">
+                                <a th:href="@{/suppliers(sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, sortBy='name')}"
+                                   class="text-decoration-none text-muted d-flex align-items-center gap-1">
+                                    Suppliers
+                                    <i th:class="${sortBy == 'name' && sortDir == 'asc'} ? 'bi bi-sort-alpha-down' : 'bi bi-sort-alpha-up'"></i>
+                                </a>
+                            </th>
+                            <th class="border-0 py-3">Contact Info</th>
+                            <th class="border-0 py-3 text-end pe-4">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="supplier : ${suppliers.content}">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-3 bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px;height:40px;font-weight:600;">
+                                        <span th:text="${supplier.name != null ? #strings.toUpperCase(#strings.substring(supplier.name,0,1)) : 'S'}"></span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold" th:text="${supplier.name}">Supplier Name</h6>
+                                        <small class="text-muted">
+                                            ID: <span th:text="${supplier.id}"></span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="mb-1">
+                                        <i class="bi bi-telephone me-2 text-muted"></i>
+                                        <span th:text="${supplier.phone}">Phone</span>
+                                    </span>
+                                    <span>
+                                        <i class="bi bi-envelope me-2 text-muted"></i>
+                                        <span th:text="${supplier.email}">Email</span>
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <a th:href="@{/suppliers/edit/{id}(id=${supplier.id})}"
+                                       class="btn btn-sm btn-light text-primary"
+                                       title="Edit" data-bs-toggle="tooltip">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-light text-danger"
+                                            title="Delete"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            th:data-id="${supplier.id}"
+                                            th:data-name="${supplier.name}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${suppliers.empty}">
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <i class="bi bi-truck display-4 mb-3 d-block"></i>
+                                No suppliers found matching your criteria.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4"
+                     th:if="${suppliers.totalPages > 1}">
+
+                    <small class="text-muted">
+                        Showing <span th:text="${suppliers.numberOfElements}">0</span>
+                        of <span th:text="${suppliers.totalElements}">0</span> Suppliers
+                    </small>
+
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+
+                            <li class="page-item" th:classappend="${suppliers.first} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/suppliers(page=${suppliers.number-1}, size=${suppliers.size}, name=${name}, phone=${phone}, email=${email})}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(0, suppliers.totalPages-1)}"
+                                th:classappend="${suppliers.number == i} ? 'active'">
+
+                                <a class="page-link"
+                                   th:href="@{/suppliers(page=${i}, size=${suppliers.size}, name=${name}, phone=${phone}, email=${email})}"
+                                   th:text="${i+1}">
+                                </a>
+                            </li>
+
+                            <li class="page-item" th:classappend="${suppliers.last} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{/suppliers(page=${suppliers.number+1}, size=${suppliers.size}, name=${name}, phone=${phone}, email=${email})}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/suppliers.js}"></script>
+</div>
+</body>
+</html>
