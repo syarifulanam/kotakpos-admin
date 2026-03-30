@@ -81,13 +81,8 @@ public class UserService {
     public UserProfileDto getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        UserProfileDto dto = new UserProfileDto();
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setRole(user.getRole());
-        dto.setStatus(user.getStatus());
-        dto.setJoinedSince(user.getCreatedAt());
-        return dto;
+
+        return userMapper.toUserProfileDto(user);
     }
 
     @Transactional

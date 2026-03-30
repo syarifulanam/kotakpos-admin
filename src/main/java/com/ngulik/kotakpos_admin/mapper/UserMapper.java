@@ -1,6 +1,7 @@
 package com.ngulik.kotakpos_admin.mapper;
 
 import com.ngulik.kotakpos_admin.dto.UserDto;
+import com.ngulik.kotakpos_admin.dto.UserProfileDto;
 import com.ngulik.kotakpos_admin.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -46,5 +47,19 @@ public class UserMapper {
         user.setRole(dto.getRole());
         user.setStatus(dto.getStatus());
         // Password update logic is usually handled separately in service
+    }
+
+    public UserProfileDto toUserProfileDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        UserProfileDto dto = new UserProfileDto();
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        dto.setStatus(user.getStatus());
+        dto.setJoinedSince(user.getCreatedAt());
+        return dto;
     }
 }
