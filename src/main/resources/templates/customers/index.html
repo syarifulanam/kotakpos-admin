@@ -122,35 +122,11 @@
                 </div>
 
 <!--                Pagination-->
-                <div class="d-flex justify-content-between align-items-center mt-4"
-                th:if="${customers.totalPages > 1}">
-                    <small class="text-muted">
-                        Showing <span th:text="${customers.numberOfElements}">0</span> of <span
-                    th:text="${customers.totalElements}">0</span> customers
-                    </small>
-                    <nav>
-                        <ul class="pagination pagination-sm mb-0">
-                            <i class="page-item" th:classappend="${customers.first} ? 'disabled'">
-                                <a class="page-link border-0"
-                                th:href="@{/customers(page=${customers.number - 1}, size=${customers.size}, name=${name}, phone=${phone}, email=${email})}">
-                                    <i class="bi bi-chevron-left"></i>
-                                </a>
-                                <li class="page-item" th:each="i : ${#numbers.sequence(0, customers.totalPages - 1)}"
-                                th:classappend="${customers.number == i} ? 'active'">
-                                    <a class="page-link border-0 rounded-circle mx-1"
-                                    th:href="@{/customers(page=${i}, size=${customers.size}, name=${name}, phone=${phone}, email=${email})}"
-                                    th:text="${i + 1}"
-                                    th:style="${customers.number == 1 ? 'background-color: var(--bs-primary); color: white; : ''}">1</a>
-                                </li>
-                                <a class="page-item" th:classappend="${customers.number + 1}, size=${customers.size}, name=${name}, phone=${phone}, email=${email}">
-                                    <i class="bi bi-chevron-right"></i>
-                                </a>
-                            </i>
-                        </ul>
-                    </nav>
-                </div>
+                <div th:replace="~{fragments/pagination :: pagination(pagedData=${customers},baseUrl='/customers',label='customers')}"></div>
+
             </div>
         </div>
+
     </div>
 
     <!--    DELETE CONFIRMATION MODAL-->
