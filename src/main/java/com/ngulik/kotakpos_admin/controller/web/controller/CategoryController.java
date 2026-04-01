@@ -1,18 +1,25 @@
 package com.ngulik.kotakpos_admin.controller.web.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.ngulik.kotakpos_admin.dto.CategoryDto;
 import com.ngulik.kotakpos_admin.entity.Category;
 import com.ngulik.kotakpos_admin.service.CategoryService;
 import com.ngulik.kotakpos_admin.util.PageHelper;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/categories")
@@ -41,7 +48,7 @@ public class CategoryController {
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        model.addAttribute("category", new CategoryDto()); // ini tuh single object bukan list jadi pake category aja bukan categories
+        model.addAttribute("category", new CategoryDto());
         return "categories/form";
     }
 
@@ -81,7 +88,7 @@ public class CategoryController {
             return "categories/form";
         }
         categoryService.updateCategory(id, categoryDto);
-        redirectAttributes.addFlashAttribute("successMessage", "category updated successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Category updated successfully.");
         return "redirect:/categories";
     }
 
@@ -91,5 +98,4 @@ public class CategoryController {
         redirectAttributes.addFlashAttribute("successMessage", "Category deleted successfully.");
         return "redirect:/categories";
     }
-
 }
