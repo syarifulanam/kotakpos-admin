@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var deleteForm = deleteModal.querySelector('#deleteForm');
 
             modalBodyInput.textContent =supplierName;
-            deleteForm.action = '/suppliers/delete' + supplierId;
+            deleteForm.action = '/suppliers/delete/' + supplierId;
         });
     }
 });

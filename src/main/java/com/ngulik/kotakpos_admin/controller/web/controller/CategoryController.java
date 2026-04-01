@@ -6,7 +6,6 @@ import com.ngulik.kotakpos_admin.service.CategoryService;
 import com.ngulik.kotakpos_admin.util.PageHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,13 +41,13 @@ public class CategoryController {
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        model.addAttribute("categories", new CategoryDto());
+        model.addAttribute("category", new CategoryDto()); // ini tuh single object bukan list jadi pake category aja bukan categories
         return "categories/form";
     }
 
     @PostMapping("/create")
     public String createCategory(
-            @Valid @ModelAttribute("categories") CategoryDto categoryDto,
+            @Valid @ModelAttribute("category") CategoryDto categoryDto,
             BindingResult result,
             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -75,7 +74,7 @@ public class CategoryController {
     @PostMapping("/edit/{id}")
     public String updateCategory(
             @PathVariable Long id,
-            @Valid @ModelAttribute("categories") CategoryDto categoryDto,
+            @Valid @ModelAttribute("category") CategoryDto categoryDto,
             BindingResult result,
             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {

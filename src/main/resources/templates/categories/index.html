@@ -8,7 +8,8 @@
 <body>
 <div layout:fragment="content">
     <div class="container-fluid py-4">
-        <!--        Header-->
+
+        <!-- HEADER -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold mb-1">Categories Management</h2>
@@ -19,18 +20,22 @@
             </a>
         </div>
 
-        <!--        Main Card-->
+        <!-- CARD -->
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
-                <!--            Search Form-->
+
+                <!-- SEARCH -->
                 <form th:action="@{/categories}" method="get" class="mb-4">
                     <div class="row g-3">
                         <div class="col-md-9">
                             <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i
-                                        class="bi bi-search text-muted"></i></span>
-                                <input type="text" name="name" class="form-control border-start-0 bg-light"
-                                       placeholder="Search by ID or name..." th:value="${query}">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-search text-muted"></i>
+                                </span>
+                                <input type="text" name="query"
+                                       class="form-control border-start-0 bg-light"
+                                       placeholder="Search by name..."
+                                       th:value="${query}">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -42,133 +47,141 @@
                     </div>
                 </form>
 
-                <!--                Categories Method-->
+                <!-- TABLE -->
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light text-uppercase text-muted small">
                         <tr>
-                            <th class="border-0 py-3 ps-4">
-                                <a th:href="@{/categories(sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, sortBy='name')}"
-                                   class="text-decoration-none text-muted">Category
-                                    <i th:if="${sortBy == 'name' || sortDir != null}"
-                                       th:class="${sortDir == 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up'}"></i>
-                                </a>
-                            </th>
-                            <th class="border-0 py-3">Description</th>
-                            <th class="border-0 py-3 text-end pe-4">Actions</th>
+                            <th class="ps-4">Category</th>
+                            <th>Description</th>
+                            <th class="text-end pe-4">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
+
                         <tr th:each="category : ${categories.content}">
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar me-3 bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
-                                         style="width: 40px; height: 40px; font-weight: bold;">
+
+                                    <div class="me-3 bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width:40px; height:40px;">
+
                                         <i th:if="${category.icon != null and !#strings.isEmpty(category.icon)}"
-                                           th:class="${'bi' + category.icon}"></i>
-                                        <span th:id="${category.icon == null or #strings.isEmpty(category.icon)}"
-                                              th:text="${#strings.substring(category.name, 0, 1)}"></span>
+                                           th:class="${'bi ' + category.icon}"></i>
+
+                                        <span th:if="${category.icon == null or #strings.isEmpty(category.icon)}"
+                                              th:text="${#strings.substring(category.name,0,1)}"></span>
                                     </div>
+
                                     <div>
-                                        <h6 class="mb-0 fw-bold" th:text="${category.name}">Category Name</h6>
-                                        <small class="text-muted">ID: <span th:text="${category.id}">1</span></small>
+                                        <div class="fw-bold" th:text="${category.name}"></div>
+                                        <small class="text-muted">ID:
+                                            <span th:text="${category.id}"></span>
+                                        </small>
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <p class="mb-0" th:text="${#strings.abbreviate(category.description, 100)}">
-                                    Description</p>
-                            </td>
+
+                            <td th:text="${#strings.abbreviate(category.description,100)}"></td>
+
                             <td class="text-end pe-4">
                                 <div class="btn-group">
+
                                     <a th:href="@{/categories/edit/{id}(id=${category.id})}"
-                                       class="btn btn-sm btn-light text-primary" title="Edit" data-bs-toggle="tooltip">
+                                       class="btn btn-sm btn-light text-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <button type="button" class="btn btn-sm btn-light text-danger" title="Delete"
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                            th:data-id="${category.id}" th:data-name="${category.name}">
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-light text-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            th:data-id="${category.id}"
+                                            th:data-name="${category.name}">
                                         <i class="bi bi-trash"></i>
                                     </button>
+
                                 </div>
                             </td>
                         </tr>
+
                         <tr th:if="${categories.empty}">
                             <td colspan="3" class="text-center py-5 text-muted">
-                                <i class="bi bi-people display-4 mb-3 d-block"></i>
-                                No categories found matching your criteria.
+                                No categories found
                             </td>
                         </tr>
+
                         </tbody>
                     </table>
                 </div>
 
-                <!--                Pagination-->
+                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-4"
                      th:if="${categories.totalPages > 1}">
+
                     <small class="text-muted">
-                        Showing <span th:text="${categories.numberOfElements}">0</span> of <span
-                            th:text="${categories.totalElements}">0</span> categories
+                        Showing <span th:text="${categories.numberOfElements}"></span> of
+                        <span th:text="${categories.totalElements}"></span>
                     </small>
-                    <nav>
-                        <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item" th:classappend="${categories.first} ? 'disabled'">
-                                <a class="page-link border-0"
-                                   th:href="@{/categories(page=0, query=${query}, sortBy=${sortBy}, sortDir=${sortDir})}">
-                                    <i class="bi bi-chevron-left"></i>
-                                </a>
-                            <li class="page-item" th:classappend="${!categories.hasPrevious()} ? 'disabled'">
-                                <a class="page-link border-0"
-                                   th:href="@{/categories(page=${categories.number - 1}, query=${query}, sortBy=${sortBy}, sortDir=${sortDir})}">
-                                    <i class="bi bi-chevron-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}"
-                                th:classappend="${categories.number == i} ? 'active'">
-                                <a class="page-link border-0 rounded-circle mx-1"
-                                   th:href="@{/categories(page=${i}, query=${query}, sortBy=${sortBy}, sortDir=${sortDir})}"
-                                   th:text="${i + 1}"
-                                   th:style="${categories.number == 1 ? 'background-color: var(--bs-primary); color: white; : ''}">1</a>
-                            </li>
-                            <li class="page-item" th:classappend="${!categories.hasNext()} ? 'disabled'">
-                                <a class="page-link border-0"
-                                th:href="@{/categories(page=${categories.number + 1}, query=${query}, sortBy=${sortBy}, sortDir=${sortDir})}">
-                                    <i class="bi bi-chevron-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" th:classappend="${categories.last} ? 'disabled'">
-                                <a class="page-link border-0"
-                                th:href="@{/categories(page=${categories.totalPages - 1}, query=${query}, sortBy=${sortBy}, sortDir=${sortDir})}">
-                                    <i class="bi bi-chevron-double-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+
+                    <ul class="pagination pagination-sm mb-0">
+
+                        <li class="page-item" th:classappend="${categories.first}? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/categories(page=${categories.number-1}, query=${query})}">
+                                ‹
+                            </a>
+                        </li>
+
+                        <li class="page-item"
+                            th:each="i : ${#numbers.sequence(0, categories.totalPages-1)}"
+                            th:classappend="${categories.number == i}? 'active'">
+
+                            <a class="page-link"
+                               th:href="@{/categories(page=${i}, query=${query})}"
+                               th:text="${i+1}">
+                            </a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${categories.last}? 'disabled'">
+                            <a class="page-link"
+                               th:href="@{/categories(page=${categories.number+1}, query=${query})}">
+                                ›
+                            </a>
+                        </li>
+
+                    </ul>
                 </div>
+
             </div>
         </div>
 
     </div>
 </div>
 
-<!--    DELETE CONFIRMATION MODAL-->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal">
     <div class="modal-dialog">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5>Confirm Delete</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
-                Are you sure you want to delete category <strong id="categoryName"></strong>?
+                Delete category <strong id="categoryName"></strong> ?
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
                 <form id="deleteForm" method="post" action="">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
+
         </div>
     </div>
 </div>

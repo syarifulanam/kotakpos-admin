@@ -71,7 +71,7 @@ public class SupplierController {
         return "redirect:/suppliers";
     }
 
-    @PostMapping("delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteSupplier(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         supplierRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Supplier deleted successfully!");

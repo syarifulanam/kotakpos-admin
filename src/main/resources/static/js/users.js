@@ -6,7 +6,7 @@ var deleteModal = document.getElementById('deleteModal');
             var userId = button.getAttribute('data-id');
             var userName = button.getAttribute('data-name');
             var modalBodyInput = deleteModal.querySelector('.modal-body #userName');
-            var deleteForm = deleteModal.querySelectore('#deleteForm');
+            var deleteForm = deleteModal.querySelector('#deleteForm');
 
             modalBodyInput.textContent = userName;
             deleteForm.action = '/users/delete/' + userId;
