@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
+
 <!--Fragment Pagination-->
 <div th:fragment="pagination"
-     th:with="pagedData=${pageData}, baseUrl=${baseUrl}, query=${query != null ? query : ''}, sortBy=${sortBy != null ? sortBy : ''}, sortDir=${sortDir != null ? sortDir : ''}"
+     th:with="pagedData=${pagedData}, baseUrl=${baseUrl}, query=${query != null ? query : ''}, sortBy=${sortBy != null ? sortBy : ''}, sortDir=${sortDir != null ? sortDir : ''}"
      class="d-flex justify-content-between align-items-center mt-4"
      th:if="${pagedData != null and pagedData.totalPages > 1}">
 
