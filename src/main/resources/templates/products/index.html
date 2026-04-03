@@ -75,8 +75,11 @@
                         <tr th:each="product : ${productPage.content}">
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <img th:if="${product.imageUrl}" th:src="@{${product.imageUrl}}" alt="Product Image"
-                                         class="rounded me-3 style=width: 40px; height: 40px; object-fit: cover;">
+                                    <img th:if="${product.imageUrl}"
+                                         th:src="@{${product.imageUrl}}"
+                                         alt="Product Image"
+                                         class="rounded me-3"
+                                         style="width: 40px; height: 40px; object-fit: cover;">
                                     <div th:unless="${product.imageUrl}"
                                          class="avatar me-3 bg-secondary text-white rounded d-flex align-items-center justify-content-center"
                                          style="width: 40px; height: 40px;">
@@ -105,8 +108,8 @@
                             </td>
                             <td>
                                 <svg class="barcode"
-                                     jsbarcode-format="CODE123"
-                                     th:jsbarcode-value="${product.barcode}"
+                                     jsbarcode-format="CODE128"
+                                     th:attr="jsbarcode-value=${product.barcode}"
                                      jsbarcode-width="1.5"
                                      jsbarcode-height="30"
                                      jsbarcode-displayValue="false">
@@ -118,11 +121,11 @@
                                        class="btn btn-sm btn-light text-success" title="View" data-bs-toggle="tooltip">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a th:href="@{/products/edit/{id}(id=${product.id}})}"
+                                    <a th:href="@{/products/edit/{id}(id=${product.id})}"
                                        class="btn btn-sm light text-primary" title="Edit" data-bs-toggle="tooltip">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a th:href="@{/products/adjust/{id}(id=${product.id}})}"
+                                    <a th:href="@{/products/adjust/{id}(id=${product.id})}"
                                        class="btn btn-sm btn-light text-info" title="Adjust Stocl"
                                        data-bs-toggle="tooltip">
                                         <i class="bi bi-gear"></i>
@@ -146,13 +149,12 @@
                 </div>
 
                 <!--                Pagination-->
-                <div th:replac="~{fragments/pagination :: pagination(pagedData=${productPage}, baseUrl='/products',label='products')}"></div>
-
+                <div th:replace="~{fragments/pagination :: pagination(pagedData=${productPage}, baseUrl='/products',label='products')}"></div>
             </div>
         </div>
     </div>
 
-<!--    DELETE CONFIRMATION MODAL-->
+    <!--    DELETE CONFIRMATION MODAL-->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
