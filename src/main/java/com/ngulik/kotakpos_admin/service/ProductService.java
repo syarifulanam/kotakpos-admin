@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,10 +55,41 @@ public class ProductService {
         savedProduct.setBarcode(barcode);
 
         if (productDto.getImage() != null && !productDto.getImage().isEmpty()) {
-            String imageUrl = ProductHelper.saveImage(productDto.getImage(), savedProduct,uploadDir, allowedExtensions, maxFileSize);
+            String imageUrl = ProductHelper.saveImage(productDto.getImage(), savedProduct, uploadDir, allowedExtensions, maxFileSize);
             savedProduct.setImageUrl(imageUrl);
         }
 
         return productRepository.save(savedProduct);
+    }
+
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
+    }
+
+    public Product updateProduct(Long id, ProductDto productDto) throws IOException {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        Category category = categoryRepository.findById(productDto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        existingProduct.setName(productDto.getName());
+        existingProduct.setCategory(category);
+        existingProduct.setUnit(productDto.getUnit());
+        existingProduct.setSellPrice(productDto.getSellPrice());
+        existingProduct.setCostPrice(productDto.getCostPrice());
+        existingProduct.setStock(productDto.getStock());
+
+        if (productDto.getImage() != null && !productDto.getImage().isEmpty()) {
+            String imageUrl = ProductHelper.saveImage(productDto.getImage(), existingProduct, uploadDir,
+                    allowedExtensions, maxFileSize);
+            existingProduct.setImageUrl(imageUrl);
+        }
+
+        return productRepository.save(existingProduct);
+    }
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 }
