@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var productId = button.getAttribute('data-id');
-            var productName = button.getAttribute('daya-name');
+            var productName = button.getAttribute('data-name');
             var modalBodyInput = deleteModal.querySelector('.modal-body #productName');
             var deleteForm = deleteModal.querySelector('#deleteForm');
 
