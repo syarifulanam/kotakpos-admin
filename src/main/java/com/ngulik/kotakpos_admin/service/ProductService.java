@@ -4,6 +4,7 @@ import com.ngulik.kotakpos_admin.dto.ProductDto;
 import com.ngulik.kotakpos_admin.entity.Category;
 import com.ngulik.kotakpos_admin.entity.Product;
 import com.ngulik.kotakpos_admin.exception.error.ResourceNotFoundException;
+import com.ngulik.kotakpos_admin.mapper.ProductMapper;
 import com.ngulik.kotakpos_admin.repository.CategoryRepository;
 import com.ngulik.kotakpos_admin.repository.ProductRepository;
 import com.ngulik.kotakpos_admin.util.ProductHelper;
@@ -32,6 +33,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductMapper productMapper;
 
     public Page<Product> getAllProducts(String query, Long categoryId, Pageable pageable) {
         return productRepository.search(query, categoryId, pageable);
@@ -62,8 +64,10 @@ public class ProductService {
         return productRepository.save(savedProduct);
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+    public ProductDto getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        return productMapper.toProductDto(product);
     }
 
     public Product updateProduct(Long id, ProductDto productDto) throws IOException {

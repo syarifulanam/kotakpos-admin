@@ -19,10 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
-@RequiredArgsConstructor
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
 
@@ -63,10 +62,10 @@ public class ProductController {
         model.addAttribute("productDto", productDto);
         model.addAttribute("categories", categories);
         model.addAttribute("units", ProductUnit.values()); // Kirim enum value
-        return "products/create";
+        return "products/form";
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public String createProduct(@Valid @ModelAttribute("productDto") ProductDto productDto,
                                 BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes,
@@ -74,8 +73,7 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             List<Category> categories = categoryRepository.findAllByOrderByIdDesc();
             model.addAttribute("categories", categories);
-            model.addAttribute("units", ProductUnit.values());
-            return "products/create";
+            return "products/form";
         }
         try {
             productService.createProduct(productDto);
@@ -89,28 +87,17 @@ public class ProductController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<Product> productOptional = productService.getProductById(id);
-        if (productOptional.isEmpty()) {
+        ProductDto productDto = productService.getProductById(id);
+        if (productDto == null) {
             return "redirect:/products";
         }
-
-        Product product = productOptional.get();
-        ProductDto productDto = new ProductDto();
-        productDto.setId(product.getId());
-        productDto.setName(product.getName());
-        productDto.setCategoryId(product.getCategory().getId());
-        productDto.setUnit(product.getUnit());
-        productDto.setSellPrice(product.getSellPrice());
-        productDto.setCostPrice(product.getCostPrice());
-        productDto.setStock(product.getStock());
 
         model.addAttribute("productDto", productDto);
         List<Category> categories = categoryRepository.findAllByOrderByIdDesc();
         model.addAttribute("categories", categories);
-        model.addAttribute("product", product);
         model.addAttribute("units", ProductUnit.values()); // Kirim enum value
 
-        return "products/edit";
+        return "products/form";
     }
 
     @PostMapping("/update/{id}")
@@ -122,8 +109,7 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             List<Category> categories = categoryRepository.findAllByOrderByIdDesc();
             model.addAttribute("categories", categories);
-//            model.addAttribute("units", ProductUnit.values());
-            return "products/edit";
+            return "products/form";
         }
         try {
             productService.updateProduct(id, productDto);
@@ -149,26 +135,12 @@ public class ProductController {
 
     @GetMapping("/view/{id}")
     public String viewProduct(@PathVariable Long id, Model model) {
-        Optional<Product> productOptional = productService.getProductById(id);
-        if (productOptional.isEmpty()) {
+        ProductDto productDto = productService.getProductById(id);
+        if (productDto == null) {
             return "redirect:/products";
         }
 
-        Product product = productOptional.get();
-        ProductDto productDto = new ProductDto();
-        productDto.setId(product.getId());
-        productDto.setName(product.getName());
-        productDto.setCategory(product.getCategory());
-        productDto.setSellPrice(product.getSellPrice());
-        productDto.setCostPrice(product.getCostPrice());
-        productDto.setStock(product.getStock());
-        productDto.setImageUrl(product.getImageUrl());
-        productDto.setUnit(product.getUnit());
-        productDto.setBarcode(product.getBarcode());
-
         model.addAttribute("productDto", productDto);
-        model.addAttribute("product", product);
-
         return "products/view";
     }
 }
