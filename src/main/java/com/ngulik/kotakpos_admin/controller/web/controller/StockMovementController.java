@@ -43,6 +43,6 @@ public class StockMovementController {
         model.addAttribute("productId", productId);
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortDir", sortDir);
-        return "pages/stock_movement/index";
+        return "stock_movement/index";
     }
 }
