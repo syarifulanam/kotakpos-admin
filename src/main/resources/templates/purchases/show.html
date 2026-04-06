@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Purchase Details</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <!--        Header-->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Purchase Details</h2>
+                <p class="text-muted mb-0">Reviewing purchase order
+                    <strong class="text-dark" th:text="${purchase.invoiceNumber}"></strong>.
+                </p>
+            </div>
+            <div>
+                <a th:href="@{/purchases}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                </a>
+                <button type="button" class="btn btn-success shadow-sm" data-bs-toggle="modal"
+                        data-bs-target="#submitPurchaseModal" th:if="${purchase.status.name() == 'DRAFT'}">
+                    <i class="bi bi-check-circle me-2"></i>Submit Purchase
+                </button>
+                <button type="button" class="btn btn-success shadow-sm" data-bs-toggle="modal"
+                        data-bs-target="#cancelPurchaseModal" th:if="${purchase.status.name() == 'COMPLETED'}">
+                    <i class="bi bi-x-circle me-2"></i>Cancel Purchase
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!--            Purchase Items Card-->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-light border-bottom-0 p-3">
+                        <h5 class="mb-0">Purchase Items</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table align-middle mb-0">
+                            <table class="table align-middle mb-0">
+                                <thead class="text-uppercase text-muted small">
+                                <tr>
+                                    <th class="border-0 py-3 ps-4">Product</th>
+                                    <th class="border-0 py-3">Quantity</th>
+                                    <th class="border-0 py-3">Cost Price</th>
+                                    <th class="border-0 py-3">Subtotal</th>
+                                    <th class="border-0 py-3 ps-4" th:if="${purchase.status.name() == 'DRAFT'}"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : ${purchase.purchaseItems}">
+                                    <td class="ps-4" th:text="${item.product.name}"></td>
+                                    <td th:text="${item.quantity}"></td>
+                                    <td th:text="'Rp ' + ${#numbers.formatDecimal(item.costPrice, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    <td class="fw-bold"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 0, 'POINT')}"></td>
+                                    <td class="pe-4 text-end" th:if="${purchase.status.name() == 'DRAFT'}">
+                                        <button type="button" class="btn btn-sm btn-light text-danger"
+                                                title="Delete Item"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteItemModal"
+                                                th:data-delete-url="@{/purchases/{purchaseId}/items/{itemId}/delete(purchaseId=${purchase.id}, itemId=${item.id})}"
+                                                th:data-item-name="${item.product.name}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(purchase.purchaseItems)}">
+                                    <td colspan="5" class="text-center p-4 text-muted">No items have been added to this
+                                        purchase order yet.
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot class="bg-light fw-bold">
+                                <tr>
+                                    <td colspan="3" class="text-end border-0 py-3">Total Amount:</td>
+                                    <td colspan="2" class="border-0 py-3 ps-3"><h5 class="mb-0"
+                                                                                   th:text="'Rp ' + ${#numbers.formatDecimal(purchase.totalAmount, 0, 'COMMA', 0, 'POINT')}"></h5>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!--            Add Item Form (only for DRAFT status)-->
+                <div class="card border-0 shadow-sm" th:if="${purchase.status.name() == 'DRAFT'}">
+                    <div class="card-header bg-light border-bottom-0 p-3">
+                        <h3 class="mb-0">Add / Update Item</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/purchases/{id}/items(id=${purchase.id})}" th:object="${purchaseItem}"
+                              method="post">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-5">
+                                    <label for="product" class="form-label">Product</label>
+                                    <select class="form-select" id="product" th:field="*{product}" required>
+                                        <option value="">Select a product</option>
+                                        <option th:each="p : ${products}" th:value="${p.id}"
+                                                th:text="${p.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" th:field="*{quantity}"
+                                           required min="1">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="costPrice" class="form-label">Cost Price</label>
+                                    <input type="number" step="0.01" class="form-control" id="costPrice"
+                                           th:field="*{costPrice}" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!--                Purchase Info Card-->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light border-bottom-0 p-3">
+                        <h5 class="mb-0">Order Information</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <p class="small text-muted mb-1">Status</p>
+                            <span class="badge fs-6 rounded-pill"
+                                  th:text="${purchase.status.name()}"
+                                  th:classappend="${purchase.status.name() == 'COMPLETED' ? 'bg-success-subtle text-success' : (purchase.status.name() == 'DRAFT' ? 'bg-warning-subtle text-warning' : 'bg-danger-subtle text-danger')}">
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <p class="small text-muted mb-1">Invoice Number</p>
+                            <p class="fw-bold" th:text="${purchase.invoiceNumber}"></p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="small text-muted mb-1">Supplier</p>
+                            <p class="fw-bold" th:text="${purchase.supplier.name}"></p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="small text-muted mb-1">Created By</p>
+                            <p class="fw-bold" th:text="${purchase.createdBy.name}"></p>
+                        </div>
+                        <div class="mb-0">
+                            <p class="small text-muted mb-1">Note</p>
+                            <p class="fst-italic" th:text="${purchase.note  ?: 'No note provided.'}"></p>
+                        </div>
+                        <div th:if="${purchase.status.name() == 'CANCELED'}" class="mt-3 pt-3 border-top">
+                            <p class="small text-muted mb-1">Cancelled</p>
+                            <p class="fw-bold"
+                               th:text="${#temporals.format(purchase.cancelledAt, 'dd MMM yyyy, HH:mm')}"></p>
+                            <p class="small text-muted mb-1">Reason</p>
+                            <p class="fw-bold fst-italic" th:text="${purchase.cancelReason}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    Submit Purchase Modal-->
+    <div class="modal fade" id="submitPurchaseModal" tabindex="-1" aria-labelledby="submitPurchaseModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitPurchaseModalLabel">Confirm Purchase Submission</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit this purchase? The purchase cannot be edited after submission and
+                    stock levels will be updated.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form th:action="@{/purchases/{id}/submit(id=${purchase.id})}" method="post">
+                        <button type="submit" class="btn btn-success">Yes, Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    Cancel Purchase Modal-->
+    <div class="modal fade" id="cancelPurchaseModal" tabindex="-1" aria-labelledby="cancelPurchaseModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/purchases/{id}/cancel(id=${purchase.id})}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelPurchaseModalLabel">Confirm Purchase Cancellation</h5>
+                        <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to cancel this purchase? This action cannot be undone and will attempt
+                            to reverse stock changes.</p>
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Cancellation</label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--    Delete Item Modal-->
+    <div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteItemModalLabel">Confirm Item deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the item <strong id="itemName"></strong> from this purchase?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteItemForm" method="post" action="">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/purchases.js}"></script>
+</diV>
+</body>
+</html>

@@ -70,6 +70,10 @@ public class ProductService {
         return productMapper.toProductDto(product);
     }
 
+    public Optional<Product> findProductById(Long id) {
+        return productRepository.findById(id);
+    }
+
     public Product updateProduct(Long id, ProductDto productDto) throws IOException {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));

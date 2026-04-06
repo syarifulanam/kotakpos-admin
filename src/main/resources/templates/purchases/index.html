@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Purchases Management</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <!--    Header-->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Purchases Management</h2>
+                <p class="text-muted mb-0">Track and manage your inventory purchases.</p>
+            </div>
+            <a th:href="@{/purchases/create}" class="btn btn-primary shadow-sm">
+                <i class="bi bi-plus-circle me-2"></i>New Purchase Order
+            </a>
+        </div>
+
+        <!--    Main Card-->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <!--            Search Form-->
+                <form th:action="@{/purchases}" method="get" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="bi bi-search text-muted"></i></span>
+                                <input type="text" name="keyword" class="form-control border-start-0 bg-light"
+                                       placeholder="Search by ID or invoice Number..." th:value="${keyword}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="status" class="form-select bg-light">
+                                <option value="">All Statuses</option>
+                                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name()}"
+                                        th:selected="${s == status}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-dark w-100" type="submit">Filter</button>
+                        </div>
+                        <div class="col-md-1">
+                            <a th:href="@{/purchases}" class="btn btn-outline-secondary w-100">Reset</a>
+                        </div>
+                    </div>
+                </form>
+
+                <!--                Purchases Table-->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase text-muted small">
+                        <tr>
+                            <th class="border-0 py-3 ps-4">
+                                <a th:href="@{/purchases(sortDir=${sortDir == 'asc' ? 'desc' : 'asc'}, sortBy='invoiceNumber')}"
+                                   class="text-decoration-none text-muted">Purchase Invoice No
+                                    <i th:if="${sortBy == 'invoiceNumber' || sortDir != null}"
+                                       th:class="${sortDir == 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up'}"></i>
+                                </a>
+                            </th>
+                            <th class="border-0 py-3">Supplier</th>
+                            <th class="border-0 py-3">Total Amount</th>
+                            <th class="border-0 py-3">Status</th>
+                            <th class="border-0 py-3 text-end pe-4">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="purchase : ${purchases.content}">
+                            <td class="ps-4">
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-0 fw-bold" th:text="${purchase.invoiceNumber}">-</h6>
+                                    <small class="text-muted"
+                                           th:text="'ID: ' + ${purchase.id} + ' | ' + ${#temporals.format(purchase.createdAt, 'dd MMM yyyy, HH:mm')}"></small>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:text="${purchase.supplier.name}">Supplier Name</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold"
+                                      th:text="'Rp ' + ${#numbers.formatDecimal(purchase.totalAmount, 0, 'COMMA', 0, 'POINT')}"></span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill"
+                                      th:text="${purchase.status.name()}"
+                                      th:classappend="${purchase.status.name() == 'COMPLETED' ? 'bg-success-subtle text-success' : (purchase.status.name() == 'DRAFT' ?
+                                      'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary')}">
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a th:href="@{/purchases/{id}(id=${purchase.id})}"
+                                   class="btn btn-sm btn-light text-primary" title="View Details"
+                                   data-bs-toggle="tooltip">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${purchases.content.isEmpty()}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-receipt-cutoff display-4 mb-3 d-block"></i>
+                                No Purchase orders found.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!--                Pagination-->
+                <div th:replace="~{fragments/pagination :: pagination(pagedData=${purchases},baseUrl='/purchases',label='purchases')}"></div>
+            </div>
+        </div>
+
+        <div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

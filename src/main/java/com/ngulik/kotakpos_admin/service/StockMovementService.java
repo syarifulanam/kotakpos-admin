@@ -1,5 +1,6 @@
 package com.ngulik.kotakpos_admin.service;
 
+import com.ngulik.kotakpos_admin.entity.Purchase;
 import com.ngulik.kotakpos_admin.entity.StockMovement;
 import com.ngulik.kotakpos_admin.enums.ReferenceType;
 import com.ngulik.kotakpos_admin.enums.StockMovementType;
