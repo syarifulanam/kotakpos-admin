@@ -1,10 +1,17 @@
 package com.ngulik.kotakpos_admin.controller.web.controller;
 
 import com.ngulik.kotakpos_admin.dto.ProductDto;
+import com.ngulik.kotakpos_admin.entity.Adjustment;
 import com.ngulik.kotakpos_admin.entity.Category;
 import com.ngulik.kotakpos_admin.entity.Product;
+import com.ngulik.kotakpos_admin.entity.StockMovement;
+import com.ngulik.kotakpos_admin.enums.AdjustmentType;
 import com.ngulik.kotakpos_admin.enums.ProductUnit;
+import com.ngulik.kotakpos_admin.exception.error.ResourceNotFoundException;
 import com.ngulik.kotakpos_admin.repository.CategoryRepository;
+import com.ngulik.kotakpos_admin.repository.ProductRepository;
+import com.ngulik.kotakpos_admin.repository.StockMovementRepository;
+import com.ngulik.kotakpos_admin.service.AdjustmentService;
 import com.ngulik.kotakpos_admin.service.ProductService;
 import com.ngulik.kotakpos_admin.util.PageHelper;
 import jakarta.validation.Valid;
@@ -18,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,6 +36,9 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryRepository categoryRepository;
+    private final StockMovementRepository stockMovementRepository;
+    private final ProductRepository productRepository;
+    private final AdjustmentService adjustmentService;
 
     @GetMapping
     public String index(Model model,
@@ -142,5 +154,50 @@ public class ProductController {
 
         model.addAttribute("productDto", productDto);
         return "products/view";
+    }
+
+    @GetMapping("/adjust/{productId}")
+    public String showStockMovements(@PathVariable Long productId, Model model) {
+        Optional<Product> productOptional = productService.findProductById(productId);
+        if (productOptional.isEmpty()) {
+            return "redirect:/products";
+        }
+
+        Product product = productOptional.get();
+        List<StockMovement> stockMovements = stockMovementRepository.findByProductId(productId);
+        model.addAttribute("product", product);
+        model.addAttribute("stockMovements", stockMovements);
+        return "products/adjustments/index";
+    }
+
+    @GetMapping("/adjust/new/{productId}")
+    public String showAdjustmentForm(@PathVariable Long productId, Model model) {
+        Optional<Product> productOptional = productService.findProductById(productId);
+        if (productOptional.isEmpty()) {
+            return "redirect:/products";
+        }
+
+        Product product = productOptional.get();
+        Adjustment adjustment = new Adjustment();
+        adjustment.setProduct(product);
+        model.addAttribute("adjustment", adjustment);
+        model.addAttribute("adjustmentTypes", Arrays.asList(AdjustmentType.values()));
+        return "products/adjustments/form";
+    }
+
+    @PostMapping("/adjustments")
+    public String processAdjustment(@ModelAttribute Adjustment adjustment, RedirectAttributes redirectAttributes) {
+        // Because the form only submits the product ID, we need to fetch the full product object here,
+        Product product = productRepository.findById(adjustment.getProduct().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid product Id:" + adjustment.getProduct().getId()));
+        adjustment.setProduct(product);
+
+        try {
+            adjustmentService.createdAdjustment(adjustment);
+            redirectAttributes.addFlashAttribute("successMessage", "Stock adjusted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error adjusting stock: " + e.getMessage());
+        }
+        return "redirect:/products/adjust/" + product.getId();
     }
 }

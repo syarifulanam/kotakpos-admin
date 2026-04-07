@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
 
-    List<StockMovement> findByProduct_Id(Long productId);
+    List<StockMovement> findByProductId(Long productId);
 
     @Query("SELECT sm FROM StockMovement sm WHERE " +
             "(:type IS NULL OR sm.type = :type) AND " +
