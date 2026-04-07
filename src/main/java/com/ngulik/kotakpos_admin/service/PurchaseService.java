@@ -137,7 +137,7 @@ public class PurchaseService {
             stockMovementRepository.save(stockMovement);
         }
 
-        purchase.setStatus(PurchaseStatus.CANCELED);
+        purchase.setStatus(PurchaseStatus.COMPLETED);
         purchaseRepository.save(purchase);
     }
 
