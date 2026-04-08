@@ -11,7 +11,11 @@ import com.ngulik.kotakpos_admin.repository.ProductRepository;
 import com.ngulik.kotakpos_admin.repository.StockMovementRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.criteria.Predicate;
 
 @RequiredArgsConstructor
 @Service
@@ -53,5 +57,23 @@ public class AdjustmentService {
         adjustmentRepository.save(adjustment);
 
         stockMovementRepository.save(stockMovement);
+    }
+
+    public Page<Adjustment> getAdjustments(AdjustmentType type, Long productId, Pageable pageable) {
+        Specification<Adjustment> spec = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (type != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("type"), type));
+            }
+
+            if (productId != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("product").get("id"), productId));
+            }
+
+            return predicate;
+        };
+
+        return adjustmentRepository.findAll(spec, pageable);
     }
 }
