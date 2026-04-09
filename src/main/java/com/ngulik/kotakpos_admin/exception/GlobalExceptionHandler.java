@@ -187,7 +187,7 @@ public class GlobalExceptionHandler {
         }
     }
 
-    @ExceptionHandler({BadRequestException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({UsernameNotFoundException.class})
     public Object handleAuthenticationException(Exception exception, HttpServletRequest request, Model model) {
         log.error("ex.getMessage(): {}", exception.getMessage());
         log.error("ex.getLocalizedMessage(): {}", exception.getLocalizedMessage());
@@ -228,7 +228,7 @@ public class GlobalExceptionHandler {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } else {
-            model.addAttribute("errorMessage", HttpStatus.BAD_REQUEST.value());
+            model.addAttribute("errorCode", HttpStatus.BAD_REQUEST.value());
             model.addAttribute("errorTitle", HttpStatus.BAD_REQUEST.getReasonPhrase());
             model.addAttribute("errorMessage", exception.getMessage());
             return "error/error";
@@ -249,7 +249,7 @@ public class GlobalExceptionHandler {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } else {
-            model.addAttribute("errorMessage", HttpStatus.BAD_REQUEST.value());
+            model.addAttribute("errorCode", HttpStatus.BAD_REQUEST.value());
             model.addAttribute("errorTitle", HttpStatus.BAD_REQUEST.getReasonPhrase());
             model.addAttribute("errorMessage", exception.getMessage());
             return "error/error";
