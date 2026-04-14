@@ -21,7 +21,7 @@ public class SalesReturnItem {
     private SalesReturn salesReturn;
 
     @ManyToOne
-    @JoinColumn(name = "product_by", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     private Long quantity;

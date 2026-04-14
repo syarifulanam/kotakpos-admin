@@ -23,10 +23,10 @@ public class Sale {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customers_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @Column(name = "Invoice_number", nullable = false, unique = true, length = 100)
+    @Column(name = "invoice_number", nullable = false, unique = true, length = 100)
     private String invoiceNumber;
 
     @Column(name = "subtotal", nullable = false, precision = 15, scale = 2)
@@ -38,7 +38,7 @@ public class Sale {
     @Column(name = "dpp", nullable = false, precision = 15, scale = 2)
     private BigDecimal dpp;
 
-    @Column(name = "tax_amount", precision = 15, scale = 2)
+    @Column(name = "tax_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal taxAmount;
 
     @Column(name = "tax_rate", precision = 5, scale = 2)
@@ -70,7 +70,7 @@ public class Sale {
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SaleItem> saleItems;
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "sale", cascade = CascadeType.ALL)
     private Payment payment;
 
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

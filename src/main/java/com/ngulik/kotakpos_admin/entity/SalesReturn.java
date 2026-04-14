@@ -26,7 +26,7 @@ public class SalesReturn {
     private String returnNumber;
 
     @ManyToOne
-    @JoinColumn(name = "Sale_id", nullable = false)
+    @JoinColumn(name = "sale_id", nullable = false)
     private Sale sale;
 
     @Column(columnDefinition = "TEXT")
@@ -45,7 +45,7 @@ public class SalesReturn {
     private User createdBy;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "salesReturn", cascade = CascadeType.ALL)

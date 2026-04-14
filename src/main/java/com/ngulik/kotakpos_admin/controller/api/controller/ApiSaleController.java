@@ -50,7 +50,7 @@ public class ApiSaleController {
     }
 
     //Create
-    @GetMapping
+    @PostMapping
     public ResponseEntity<ApiResponse<SaleResponse>> createSale(@RequestBody SaleRequest saleRequest) {
         SaleResponse createdSale = saleService.createSale(saleRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
