@@ -126,6 +126,6 @@ public class UserService {
         } else {
             email = principal.toString();
         }
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found: " + email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found: " + email));
     }
 }

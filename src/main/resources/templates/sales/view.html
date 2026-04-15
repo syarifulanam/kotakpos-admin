@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>View Sale</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Sale Details</h2>
+                        <p class="text-muted mb-0">
+                            Invoice
+                            <strong class="text-dark"
+                                    th:text="${sale.invoiceNumber != null ? '#' + sale.invoiceNumber : '-'}">-</strong>
+                        </p>
+                    </div>
+                    <a th:href="@{/sales}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+
+                <!-- Main Info -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4 border-bottom pb-4">
+                            <div>
+                                <span class="badge rounded-pill fs-6 mb-2"
+                                      th:classappend="${sale.status == 'COMPLETED'} ? 'bg-success' :
+                                                      (${sale.status == 'PENDING'} ? 'bg-warning' :
+                                                      ((sale.status == 'REFUNDED') or (sale.status == 'PARTIALLY_REFUNDED') ? 'bg-danger' : 'bg-secondary'))"
+                                      th:text="${sale.status != null ? sale.status : '-'}">
+                                </span>
+
+                                <div class="text-muted small mt-1">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    <span th:text="${sale.createdAt != null ? #temporals.format(sale.createdAt, 'dd MMMM yyyy, HH:mm') : '-'}">-</span>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <p class="text-muted small text-uppercase mb-1">Total Amount</p>
+                                <h3 class="fw-bold text-primary"
+                                    th:text="'Rp ' + ${#numbers.formatDecimal(sale.totalAmount != null ? sale.totalAmount : 0, 0, 'COMMA', 0, 'POINT')}">
+                                    -
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Customer Information</h6>
+                            </div>
+
+                            <div class="col-md-6 d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-circle p-3 me-3">
+                                    <i class="bi bi-person text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold"
+                                       th:text="${sale.customer != null ? sale.customer.name : '-'}">-</p>
+                                    <small class="text-muted">Customer</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 d-flex align-items-center mb-3">
+                                <div class="bg-light rounded-circle p-3 me-3">
+                                    <i class="bi bi-person-badge text-secondary fs-4"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold"
+                                       th:text="${sale.createdBy != null ? sale.createdBy.name : '-'}">-</p>
+                                    <small class="text-muted">Created By</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Payment Information</h6>
+                                <div th:if="${sale.payment != null}">
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <p class="mb-1 small text-muted">Method</p>
+                                            <p class="fw-bold"
+                                               th:text="${sale.payment.paymentMethod != null ? sale.payment.paymentMethod : '-'}">
+                                                -</p>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <p class="mb-1 small text-muted">Reference</p>
+                                            <p class="fw-bold"
+                                               th:text="${sale.payment.paymentReference != null ? sale.payment.paymentReference : '-'}">
+                                                -</p>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <p class="mb-1 small text-muted">Paid At</p>
+                                            <p class="fw-bold"
+                                               th:text="${sale.payment.paidAt != null ? #temporals.format(sale.payment.paidAt, 'dd MMMM yyyy, HH:mm') : '-'}">
+                                                -
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div th:if="${sale.payment == null}" class="alert alert-light text-center">
+                                    No payment details available
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${sale.note != null}" class="alert alert-light border mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong class="me-1">Note:</strong>
+                            <span th:text="${sale.note}">-</span>
+                        </div>
+                        <h6 class="text-uppercase text-muted small fw-bold mb-3">Items Sold</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : ${sale.items}">
+                                    <td>
+                                        <div class="fw-bold" th:text="${item.productName}">-</div>
+                                        <small class="text-muted"
+                                               th:text="'ID: ' + ${item.productId}">-</small>
+                                    </td>
+                                    <td class="text-center" th:text="${item.quantity}">-</td>
+                                    <td class="text-end"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(item.sellPrice, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                    <td class="text-end fw-bold"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(item.subtotal, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end">Subtotal</td>
+                                    <td class="text-end"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(sale.subtotal, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end">Discount</td>
+                                    <td class="text-end"
+                                        th:text="'- Rp ' + ${#numbers.formatDecimal(sale.discountAmount, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end">DPP</td>
+                                    <td class="text-end"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(sale.dpp, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"
+                                        th:text="'Tax (' + ${#numbers.formatDecimal(sale.taxRate, 0, 'COMMA', 2, 'POINT')} + '%)'">
+                                    </td>
+                                    <td class="text-end"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(sale.taxAmount, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td colspan="3" class="text-end">Total</td>
+                                    <td class="text-end text-primary"
+                                        th:text="'Rp ' + ${#numbers.formatDecimal(sale.totalAmount, 0, 'COMMA', 2, 'POINT')}">
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div th:if="${sale.refunds != null and !sale.refunds.isEmpty()}"
+                             class="mt-4 pt-4 border-top">
+                            <h6 class="text-danger fw-bold mb-3">
+                                <i class="bi bi-arrow-return-left me-2"></i>Refund History
+                            </h6>
+                            <div th:each="refund : ${sale.refunds}"
+                                 class="alert alert-danger bg-opacity-10 border-danger mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <strong th:text="'- Rp ' + ${#numbers.formatDecimal(refund.amount, 0, 'COMMA', 0, 'POINT')}"></strong>
+                                        <span class="mx-2">|</span>
+                                        <span th:text="${refund.reason}">-</span>
+                                    </div>
+                                    <div class="text-end small">
+                                        <div th:text="${refund.refundedAt != null ? #temporals.format(refund.refundedAt, 'dd MMM yyyy, HH:mm') : '-'}"></div>
+                                        <div class="text-muted"
+                                             th:text="'By: ' + ${refund.refundedBy != null ? refund.refundedBy : '-'}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action -->
+                        <div class="mt-4 pt-3 border-top text-end"
+                             th:if="${sale.originalStatus == 'COMPLETED' and (sale.refunds == null or sale.refunds.isEmpty())}">
+                            <button type="button" class="btn btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#refundModal">
+                                <i class="bi bi-arrow-left me-2"></i>Process Full Refund
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Refund Modal-->
+    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/sales/refund/{id}(id=${sale.id})}" method="post">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="refundModalLabel">Process Full Refund</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            This action cannot be undone.
+                        </div>
+                        <p class="text-muted mb-3">Are you sure you want to process a full refund for this sale?</p>
+                        <div class="mb-3">
+                            <label for="reason" class="form-label fw-bold small text-uppercase">Reason for Refund
+                            </label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3" required
+                                      placeholder="Enter reason..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Confirm Refund</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

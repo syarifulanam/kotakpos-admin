@@ -1,5 +1,6 @@
 package com.ngulik.kotakpos_admin.controller.api.controller;
 
+import com.ngulik.kotakpos_admin.controller.request.RefundRequest;
 import com.ngulik.kotakpos_admin.controller.request.SaleRequest;
 import com.ngulik.kotakpos_admin.controller.response.ApiPageResponse;
 import com.ngulik.kotakpos_admin.controller.response.ApiResponse;
@@ -7,6 +8,7 @@ import com.ngulik.kotakpos_admin.controller.response.SaleResponse;
 import com.ngulik.kotakpos_admin.enums.TransactionsStatus;
 import com.ngulik.kotakpos_admin.service.RefundService;
 import com.ngulik.kotakpos_admin.service.SaleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,5 +57,14 @@ public class ApiSaleController {
         SaleResponse createdSale = saleService.createSale(saleRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Sale created successfully", createdSale));
+    }
+
+    @PostMapping("/{id}/refund")
+    public ResponseEntity<ApiResponse<SaleResponse>> processRefund(
+            @PathVariable Long id,
+            @Valid @RequestBody RefundRequest refundRequest) {
+        refundService.processFullRefund(id, refundRequest.getReason());
+        SaleResponse updatedSale = saleService.getSaleById(id); // Fetch the updated sale details
+        return ResponseEntity.ok(ApiResponse.success("Sale has been successfully refunded.", updatedSale));
     }
 }
