@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - KotakPOS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+<div class="auth-card">
+    <div class="card-header">
+        <i class="bi bi-shop logo"></i>
+        <h3>Create Account</h3>
+        <p class="text-muted">Join us by creating a new account.</p>
+    </div>
+    <div class="card-body">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <form th:action="@{/register}" th:object="${userDto}" method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}"
+                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}"
+                th:classappend="${#fields.hasErrors('email')} ? 'is-Invalid' : ''" required>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}"
+                th:classappend="${#fields.hasErrors('password')} ? 'is-Invalid' : ''" required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                th:errors="*{password}"></div>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+        <div class="mt-4 text-center">
+            <span class="text-muted footer-link">Alredy have an account?</span>
+            <a th:href="@{/login}" class="footer-link">Login here</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

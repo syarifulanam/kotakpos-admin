@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>User Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!--                Header-->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1" th:text="${user.id == null ? 'Create New User' : 'Edit User'}">User
+                            Form</h2>
+                        <p class="text-muted mb-0">Fill in the details below to <span
+                                th:text="${user.id == null ? 'create a new user' : 'update user information'}"></span>.
+                        </p>
+                    </div>
+                    <a th:href="@{/users}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+                <!--                    Form Card-->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <form th:action="@{/users/save}" th:object="${user}" method="post">
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h5 class="text-primary mb-3">Personal Information</h5>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label fw-bold">Full Name</label>
+                                    <div class="input-group">
+                                            <span class="input-group-text bg-light"><i
+                                                    class="bi bi-person text-muted"></i></span>
+                                        <input type="text" class="form-control" id="name" th:field="*{name}"
+                                               placeholder="e.g. John Doe"
+                                               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+                                             th:errors="*{name}"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label fw-bold">Email Address</label>
+                                    <div class="input-group">
+                                            <span class="input-group-text bg-light"><i
+                                                    class="bi bi-envelope text-muted"></i></span>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}"
+                                               placeholder="e.g. john@example.com"
+                                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                                             th:errors="*{email}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4" th:if="${user.id == null}">
+                                <div class="col-md-12">
+                                    <h5 class="text-primary mb-3">Security</h5>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="password" class="form-label fw-bold">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i
+                                                class="bi bi--key text-muted"></i></span>
+                                        <input type="password" class="form-control" id="password" th:field="*{password}"
+                                               placeholder="Enter a strong password"
+                                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                                             th:errors="*{password}"></div>
+                                    </div>
+                                    <small class="text-muted">Password must be at least 8 characters long.</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <h5 class="text-primary mb-3">Access Control</h5>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="role" class="form-label fw-bold">Role</label>
+                                    <select class="form-select" id="role" th:field="*{role}"
+                                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">
+                                        <option th:each="roleOpt : ${roles}"
+                                                th:value="${roleOpt}"
+                                                th:text="${roleOpt}">Role
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}"
+                                         th:errors="*{role}"></div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label fw-bold">Status</label>
+                                    <select class="form-select" id="status" th:field="*{status}"
+                                            th:classappend="${#fields.hasErrors('status')} ? 'is-invalid' : ''">
+                                        <option th:each="statusOpt : ${statuses}"
+                                                th:value="${statusOpt}"
+                                                th:text="${statusOpt}">Status
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}"
+                                         th:errors="*{status}"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                                <a th:href="@{/users}" class="btn btn-light border">Cancel</a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-lg me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

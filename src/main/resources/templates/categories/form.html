@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title th:text="${category.id == null ? 'New Category' : 'Edit Category'}">Category Form</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1"
+                            th:text="${category.id == null ? 'Create New Category' : 'Edit Category'}">Category
+                            Form</h2>
+                        <p class="text-muted mb-0">Fill in the details below to <span
+                                th:text="${category.id == null ? 'add a new category' : 'update category information'}"></span>.
+                        </p>
+                    </div>
+                    <a th:href="@{/categories}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <form th:action="${category.id} ? @{/categories/edit/{id}(id=${category.id})} : @{/categories/create}"
+                              th:object="${category}" method="post">
+                            <input type="hidden" th:field="*{id}">
+
+                            <div class="mb-4">
+                                <label for="name" class="form-label fw-bold">Category Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-tag text-muted"></i></span>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}"
+                                           placeholder="e.g. Electronics" required
+                                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+                                         th:errors="*{name}"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="icon" class="form-label fw-bold">Icon</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-emoji-smile text-muted"></i></span>
+                                    <input type="text" class="form-control" id="icon" th:field="*{icon}"
+                                           placeholder="e.g. bi-phone">
+                                </div>
+                                <div class="form-text">
+                                    Enter a <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap
+                                    Icons</a> class name (e.g., "bi-phone").
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="description" class="form-label fw-bold">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="4"
+                                          placeholder="A short description of the category..."></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                                <a th:href="@{/categories}" class="btn btn-light border">Cancel</a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-lg me-2"></i>Save Category
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">KotakPOS Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="wrapper">
+    <!--    sidebar / menu samping-->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="bi bi-shop me-2"></i>KotaKPOS</h3>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li class="sidebar-heading">DASHBOARD</li>
+            <li th:classappend="${requestURI == '/dashboard' ? 'active' : ''}">
+                <a th:href="@{/dashboard}">
+                    <i class="bi bi-speedometer2 sidebar-icon"></i> Dashboard
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'OWNER')"
+            th:classappend="${requestURI != null && requestURI.startsWith('/reports') ? 'active' : ''}">
+            <a href="#reportSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                <i class="bi bi-graph-up sidebar-icon"></i> Reports
+            </a>
+                <ul class="collapse list-unstyled" id="reportSubmenu"
+                th:classappend="${requestURI != null && requestURI.startsWith('/reports') ? 'show' : ''}">
+                    <li th:classappend="${requestURI != null && requestURI.startsWith('/reports/sales-summary') ? 'active' : ''}">
+                        <a th:href="@{/reports/sales-summary}">Sales Summary</a>
+                    </li>
+                    <li th:classappend="${requestURI != null && requestURI.startsWith('/reports/revenue') ? 'active' : ''}">
+                        <a th:href="@{/reports/revenue}">Revenue Reports</a>
+                    </li>
+                    <li th:classappend="${requestURI != null && requestURI.startsWith('/reports/profit') ? 'active' : ''}">
+                        <a th:href="@{/reports/profit}">Profit Report</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')" class="sidebar-heading">MASTER DATA</li>
+
+            <li sec:authorize="hasAnyRole('ADMIN')"
+            th:classappend="${requestURI != null && requestURI.startsWith('/users') ? 'active' : ''}">
+                <a th:href="@{/users}">
+                    <i class="bi bi-people sidebar-icon"></i> Users
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+            th:classappend="${requestURI != null && requestURI.startsWith('/customers') ? 'active' : ''}">
+                <a th:href="@{/customers}">
+                    <i class="bi bi-person-lines-fill sidebar-icon"></i> Customers
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+            th:classappend="${requestURI != null && requestURI.startsWith('/suppliers') ? 'active' : ''}">
+                <a th:href="@{/suppliers}">
+                    <i class="bi bi-truck sidebar-icon"></i> Suppliers
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+                th:classappend="${requestURI != null && requestURI.startsWith('/categories') ? 'active' : ''}">
+                <a th:href="@{/categories}">
+                    <i class="bi bi-tags sidebar-icon"></i> Categories
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+                th:classappend="${requestURI != null && requestURI.startsWith('/products') ? 'active' : ''}">
+                <a th:href="@{/products}">
+                    <i class="bi bi-box-seam sidebar-icon"></i> Products
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')" class="sidebar-heading">TRANSACTION</li>
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+            th:classappend="${requestURI != null && requestURI.startsWith('/purchases') ? 'active' : ''}">
+                <a th:href="@{/purchases}">
+                    <i class="bi bi-cart-check sidebar-icon"></i> Purchases
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+                th:classappend="${requestURI != null && requestURI.startsWith('/stock-movements') ? 'active' : ''}">
+                <a th:href="@{/stock-movements}">
+                    <i class="bi bi-cart-check sidebar-icon"></i> Stock Movements
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+                th:classappend="${requestURI != null && requestURI.startsWith('/adjustments') ? 'active' : ''}">
+                <a th:href="@{/adjustments}">
+                    <i class="bi bi-cart-check sidebar-icon"></i> Adjustments
+                </a>
+            </li>
+
+            <li sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+                th:classappend="${requestURI != null && requestURI.startsWith('/sales') ? 'active' : ''}">
+                <a th:href="@{/sales}">
+                    <i class="bi bi-cart-check sidebar-icon"></i> Sales
+                </a>
+            </li>
+            <li class="sidebar-heading">ACCOUNT</li>
+
+            <li th:classappend="${requestURI != null && requestURI.startsWith('profile') ? 'active' : ''}">
+                <a th:href="@{/profile}">
+                    <i class="bi bi-person-circle sidebar-icon"></i> Profile
+                </a>
+            </li>
+
+            <li>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-link text-decoration-none w-100 text-start"
+                    style="color: #adb5bd; padding: 10px 20px; font-size: 1.1em">
+                        <i class="bi bi-box-arrow-right sidebar-icon"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <!--    page content / halaman body-->
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="ms-auto">
+                    <span class="navbar-text me-3">
+                        Welcome, <strong sec:authentication="name">User</strong>
+                    </span>
+                </div>
+            </div>
+        </nav>
+
+<!--        Flash Message-->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm mb-4"
+        role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div layout:fragment="content">
+<!--            Content will be injected here-->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/layout.js}"></script>
+</body>
+</html>

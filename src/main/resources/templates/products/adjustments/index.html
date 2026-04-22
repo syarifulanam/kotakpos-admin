@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Stock Movements</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <!--        Header-->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Stock Movements for <span th:text="${product.name}">Product Name</span></h2>
+                <p class="text-muted mb-0">Track and manage stock adjustments for this product.</p>
+            </div>
+            <a th:href="@{/products}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2">Back to Products</i>
+            </a>
+        </div>
+
+        <!--        Product Info Card-->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img th:if="${product.imageUrl}" th:src="@{${product.imageUrl}}" alt="Product Image"
+                             class="img-fluid rounded border" style="max-height: 150px;">
+                        <div th:unless="${product.imageUrl}"
+                             class="bg-light rounded border d-flex align-items-center justify-content-center"
+                             style="height: 150px;">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h4 class="fw-bold" th:text="${product.name}">Product Name</h4>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary-subtle text-primary me-2" th:text="${product.category.name}">Category</span>
+                            <span class="text-muted">SKU: <span th:text="${product.barcode}">BARCODE</span></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column">
+                                    <small class="text-muted text-uppercase">Sell Price</small>
+                                    <span class="fw-bold fs-5" th:text="${#numbers.formatCurrency(product.sellPrice)}">Rp 0</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column">
+                                    <small class="text-muted text-uppercase">Cost Price</small>
+                                    <span class="fw-bold fs-5" th:text="${#numbers.formatCurrency(product.costPrice)}">Rp 0</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column">
+                                    <small class="text-muted text-uppercase">Current Stock</small>
+                                    <span class="fw-bold fs-5" th:text="${product.stock}">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--            Stock Movement History-->
+            <div class="card-border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold mb-0">Movement History</h5>
+                    <a th:href="@{/products/adjust/new/{productId}(productId=${product.id})}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Add Stock Adjustment
+                    </a>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase text-muted small">
+                        <tr>
+                            <th class="border-0 py-3 ps-4">Date</th>
+                            <th class="border-0 py-3">Type</th>
+                            <th class="border-0 py-3">Quantity</th>
+                            <th class="border-0 py-3">Note</th>
+                            <th class="border-0 py-3">User</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="movement : ${stockMovements}">
+                            <td class="ps-4" th:text="${#temporals.format(movement.createdAt, 'dd MMM yyyy, HH:mm')}">01
+                                Jan 2023, 10:00
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${movement.type.name().contains('IN') ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}"
+                                      th:text="${movement.type}">-</span>
+                            </td>
+                            <td th:text="${movement.quantity}">-</td>
+                            <td th:text="${movement.note}">-</td>
+                            <td th:text="${movement.createdBy.name}">-</td>
+                        </tr>
+                        <tr th:if="${stockMovements.isEmpty()}">
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-box-seam display-4 mb-3 d-block"></i>
+                                No stock movements found for this product.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

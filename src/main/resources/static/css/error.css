@@ -1,0 +1,32 @@
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+.error-card {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: 40px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+.error-code {
+    font-size: 80px;
+    font-weight: bold;
+    color: #dc3545;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+.error-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #343a40:
+}
+.error-message {
+    color: #6c757d;
+    margin-bottom: 30px;
+}

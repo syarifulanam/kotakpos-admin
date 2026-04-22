@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Adjust Stock</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid py-4">
+        <!--        Header-->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Adjust Stock</h2>
+                <p class="text-muted mb-0">Create a new stock adjustment for <span class="fw-bold"
+                                                                                   th:text="${adjustment.product.name}">Product Name</span>.
+                </p>
+            </div>
+            <a th:href="@{/products/adjust/{productId}(productId=${adjustment.product.id})}"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Movements
+            </a>
+        </div>
+
+        <!--        Main Card-->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form th:action="@{/products/adjustments}" th:object="${adjustment}" method="post">
+                    <input type="hidden" th:field="*{product.id}"/>
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Adjustment Type</label>
+                                <select class="form-select" id="type" th:field="*{type}" required>
+                                    <option th:each="type : ${adjustmentTypes}" th:value="${type}"
+                                            th:text="${type.displayName}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" th:field="*{quantity}" required
+                                       min="-1">
+                            </div>
+                            <div class="mb-4">
+                                <label for="note" class="form-label">Note / Reason</label>
+                                <textarea class="form-control" id="note" th:field="*{note}" rows="4"
+                                          placeholder="e.g., Initial stock, correction for damaged goods"></textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Submit Adjustment</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
