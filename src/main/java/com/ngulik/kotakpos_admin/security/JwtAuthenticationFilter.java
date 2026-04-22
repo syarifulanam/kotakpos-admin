@@ -29,9 +29,9 @@ import java.time.LocalDateTime;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenBlacklistService tokenBlacklistService;
-    public final ObjectMapper objectMapper;
-    public final JwtUtils jwtUtils;
-    public final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
+    private final JwtUtils jwtUtils;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
